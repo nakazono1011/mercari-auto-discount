@@ -1,0 +1,10 @@
+{
+  "name": "container selenium",
+  "dockerComposeFile": [
+      "../docker-compose.yml",
+      "../.devcontainer/docker-compose.yml"
+  ],
+  "service": "selenium",
+  "workspaceFolder": "/workspace/selenium",
+  "shutdownAction": "none"
+}
