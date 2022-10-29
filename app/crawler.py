@@ -45,7 +45,7 @@ class MercariDiscountCrawler:
         item_urls = []
         for el in item_list:
             item_root = el.find_element(By.TAG_NAME, 'mer-item-object').shadow_root
-            # if self._is_skip(item_root): continue
+            if self._is_skip(item_root): continue
 
             item_url = el.find_element(By.TAG_NAME, 'a').get_attribute('href')
             item_urls.append(item_url)
