@@ -1,6 +1,10 @@
-from crawler import MercariDiscountCrawler
-import config
+import argparse
+from factory import CrawlerFactory
 
 if __name__ == "__main__":
-    crawler = MercariDiscountCrawler(config.DRIVER_PATH, config.PROFILE_PATH)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", "-m", type=str)
+    args = parser.parse_args()
+
+    crawler = CrawlerFactory().create(args.mode)
     crawler.crawl()
