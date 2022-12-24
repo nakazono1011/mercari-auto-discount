@@ -1,6 +1,6 @@
 from logging import getLogger, DEBUG, FileHandler, Formatter
 
-def get_module_logger(module=__name__, filepath="./mercari.log"):
+def get_module_logger(module=__name__, filepath="./log/mercari.log"):
     logger = getLogger(module)
     logger.setLevel(DEBUG)
     handler = FileHandler(filepath)
