@@ -1,8 +1,7 @@
-DRIVER_PATH  = "./driver/chromedriver"
+DRIVER_PATH = "./driver/chromedriver"
 PROFILE_PATH = "./profile/myprofile"
 
-WEEKLY_SALE_COMMENT = \
-"""
+WEEKLY_SALE_COMMENT = """
 ★週末セール！★
 週末限定で最初にコメントをくださった方のみ、
 値段ごとに以下の割引にて販売させていただきます！ 
