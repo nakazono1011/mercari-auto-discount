@@ -1,3 +1,4 @@
 from crawler.mercari.base_crawler import BaseCrawler
 from crawler.mercari.discount_crawler import DiscountCrawler
-from crawler.mercari.weekly_comment_crawler import WeeklyCommentCrawler
+from crawler.mercari.weekly_comment_create_crawler import WeeklyCommentCreateCrawler
+from crawler.mercari.weekly_comment_delete_crawler import WeeklyCommentDeleteCrawler
