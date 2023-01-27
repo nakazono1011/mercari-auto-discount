@@ -22,7 +22,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                 time.sleep(random.randint(1, 4))
 
                 item_name = self.driver.find_element(
-                    By.CSS_SELECTOR, 'mer-heading[data-testid="name"]'
+                    By.CSS_SELECTOR, 'div[data-testid="name"]'
                 ).text
 
                 comment_elements = self.driver.find_elements(
