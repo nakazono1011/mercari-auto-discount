@@ -40,7 +40,7 @@ class WeeklyCommentCrawler(BaseCrawler):
                 
                 time.sleep(random.randint(1, 4))
 
-                item_name = self.driver.find_element(By.CSS_SELECTOR, 'mer-heading[data-testid="name"]').text
+                item_name = self.driver.find_element(By.CSS_SELECTOR, 'div[data-testid="name"]').text
                 
                 self.driver.find_element(By.CSS_SELECTOR, ".input-node").send_keys(config.WEEKLY_SALE_COMMENT)
                 
