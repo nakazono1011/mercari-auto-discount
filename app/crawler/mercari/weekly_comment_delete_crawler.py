@@ -13,6 +13,8 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
     START_URL = "https://jp.mercari.com/mypage/listings"
     # 最低いいね数
     MIN_LIKE_COUNT = 2
+    # 削除対象の判定文字列
+    DELETE_TARGET_CHARCTER = "★"
 
     def _delete_comment_all(self, target_urls):
         for target_url in target_urls:
@@ -25,13 +27,17 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                     By.CSS_SELECTOR, 'div[data-testid="name"]'
                 ).text
 
+                self.driver.find_element(
+                    By.CSS_SELECTOR, ".mer-spacing-b-24 > mer-button"
+                ).click()
+
                 comment_elements = self.driver.find_elements(
-                    By.CSS_SELECTOR, "[class='style_comment__aeCYd']"
+                    By.CSS_SELECTOR, ".comment"
                 )
 
                 for comment_element in comment_elements:
                     if (
-                        "週末セール"
+                        self.DELETE_TARGET_CHARCTER
                         in comment_element.find_element(
                             By.CSS_SELECTOR, "mer-text"
                         ).text
