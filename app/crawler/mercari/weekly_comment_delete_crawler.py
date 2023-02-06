@@ -27,6 +27,10 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                     By.CSS_SELECTOR, 'div[data-testid="name"]'
                 ).text
 
+                self.driver.find_element(
+                    By.CSS_SELECTOR, ".mer-spacing-b-24 > mer-button"
+                ).click()
+
                 comment_elements = self.driver.find_elements(
                     By.CSS_SELECTOR, ".comment"
                 )
