@@ -1,7 +1,9 @@
 import time
 import random
 
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
 from crawler.mercari import BaseCrawler
 from logger import get_module_logger
@@ -27,9 +29,17 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                     By.CSS_SELECTOR, 'div[data-testid="name"]'
                 ).text
 
-                self.driver.find_element(
-                    By.CSS_SELECTOR, ".mer-spacing-b-24 > mer-button"
-                ).click()
+                try:
+                    wait = WebDriverWait(self.driver, 1)
+                    element = wait.until(
+                        EC.presence_of_element_located(
+                            (By.CSS_SELECTOR, ".mer-spacing-b-24 > mer-button")
+                        )
+                    )
+
+                    element.click()
+                except:
+                    pass
 
                 comment_elements = self.driver.find_elements(
                     By.CSS_SELECTOR, ".comment"
@@ -90,6 +100,8 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
         logger.info(f"[イベント] 処理開始")
         self.driver = self._load_driver()
         self.driver.get(self.START_URL)
+
+        time.sleep(5)
 
         # 出品リストをロード
         self._load_more()
