@@ -1,7 +1,12 @@
 from logging import getLogger, DEBUG, FileHandler, Formatter
+import datetime
+
+now = datetime.datetime.now()
 
 
-def get_module_logger(module=__name__, filepath="./log/mercari.log"):
+def get_module_logger(
+    module=__name__, filepath=f"./log/{now.strftime('%Y%m%d')}_mercari.log"
+):
     logger = getLogger(module)
     logger.setLevel(DEBUG)
     handler = FileHandler(filepath)
