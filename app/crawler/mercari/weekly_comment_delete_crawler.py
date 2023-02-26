@@ -42,7 +42,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                     pass
 
                 comment_elements = self.driver.find_elements(
-                    By.CSS_SELECTOR, ".comment"
+                    By.CSS_SELECTOR, ".comment__f35831cf"
                 )
 
                 for comment_element in comment_elements:
