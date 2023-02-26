@@ -1,6 +1,6 @@
 build:
   docker:
-    chrome: Dockerfile
+    web: Dockerfile
   config:
     VNC_NO_PASSWORD: 1
     SCREEN_WIDTH: 1600
