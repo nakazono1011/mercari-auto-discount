@@ -3,7 +3,7 @@ variable "env" {
 }
 
 variable "app_name" {
-  default = "sedory"
+  default = "sellin"
 }
 
 variable "vpc_cidr" {
@@ -27,7 +27,7 @@ variable "cidr_block-internet_gw" {
 }
 
 variable "aws_amis" {
-  type = map
+  type = map(any)
   default = {
     "us-east-1" = "ami-0739f8cdb239fe9ae"
     "us-west-2" = "ami-008b09448b998a562"
@@ -36,6 +36,6 @@ variable "aws_amis" {
 }
 
 variable "aws_region" {
-  type = string
+  type    = string
   default = "us-east-1"
 }

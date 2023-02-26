@@ -1,5 +1,6 @@
 provider "aws" {
-  region = "ap-northeast-1"
+  region  = "ap-northeast-1"
+  profile = "myaws"
 
   default_tags {
     tags = {

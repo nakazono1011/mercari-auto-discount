@@ -1,0 +1,7 @@
+FROM seleniarm/standalone-chromium:latest
+
+EXPOSE 4444 5900 7900
+
+ENV VNC_NO_PASSWORD=1 \
+    SCREEN_WIDTH=1600 \ 
+    SCREEN_HEIGHT=900
