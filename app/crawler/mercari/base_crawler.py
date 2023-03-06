@@ -35,13 +35,13 @@ class BaseCrawler(metaclass=ABCMeta):
         """
         出品ページの「もっと見る」ボタンが非表示になるまで再帰的に押し続ける処理
         """
-        LOAD_BUTTON_CSS_SELECTOR = ".LoadMoreButton__StyledButton-sc-ua1bnc-0 > button"
+        LOAD_BUTTON_XPATH = '//*[@id="currentListing"]/div/mer-button'
 
-        if not self.driver.find_elements(By.CSS_SELECTOR, LOAD_BUTTON_CSS_SELECTOR):
+        if not self.driver.find_elements(By.XPATH, LOAD_BUTTON_XPATH):
             return
 
         load_more_button = self.driver.find_element(
-            By.CSS_SELECTOR, LOAD_BUTTON_CSS_SELECTOR
+            By.XPATH, LOAD_BUTTON_XPATH
         )
         load_more_button.click()
 
