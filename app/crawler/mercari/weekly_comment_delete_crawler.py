@@ -76,7 +76,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
 
         # 商品リストの要素を取得
         listed_item_element = self.driver.find_element(
-            By.XPATH, '//*[@id="currentListing"]/mer-list'
+            By.CSS_SELECTOR, "[data-testid='listed-item-list']"
         )
         item_list = listed_item_element.find_elements(By.TAG_NAME, "mer-list-item")
 
