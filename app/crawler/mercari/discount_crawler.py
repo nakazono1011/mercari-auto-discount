@@ -64,7 +64,7 @@ class DiscountCrawler(BaseCrawler):
                 time.sleep(random.randint(1, 2))
 
                 edit_url = self.driver.find_element(
-                    By.XPATH, '//*[@id="item-info"]/section[1]/div[2]/mer-button/a'
+                    By.CSS_SELECTOR, "[data-testid='checkout-button']>a"
                 ).get_attribute("href")
 
                 self.driver.get(edit_url)
@@ -87,7 +87,7 @@ class DiscountCrawler(BaseCrawler):
                 time.sleep(0.5)
 
                 edit_button = self.driver.find_element(
-                    By.XPATH, '//*[@id="main"]/form/div[2]/mer-button[1]/button'
+                    By.CSS_SELECTOR, '[data-testid="edit-button"]'
                 )
                 edit_button.click()
 

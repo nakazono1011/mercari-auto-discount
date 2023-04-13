@@ -32,7 +32,7 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
 
                 self.driver.find_element(
                     By.CSS_SELECTOR,
-                    "mer-button[data-location='item_details:comment:post_button']",
+                    "[data-location='item_details:comment:post_button']",
                 ).click()
                 logger.info(f"[商品名] {item_name} [イベント] 週末セールコメント登録完了")
 
