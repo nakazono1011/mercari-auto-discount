@@ -35,9 +35,10 @@ class BaseCrawler(metaclass=ABCMeta):
         """
         出品ページの「もっと見る」ボタンが非表示になるまで再帰的に押し続ける処理
         """
-        LOAD_BUTTON_XPATH = '//*[@id="currentListing"]/div/mer-button'
+        LOAD_BUTTON_XPATH = "//*[@id='currentListing']//*[contains(text(), 'もっと見る')]"
 
         if not self.driver.find_elements(By.XPATH, LOAD_BUTTON_XPATH):
+            logger.error("[エラー] もっと見るボタンが見つかりませんでした")
             return
 
         load_more_button = self.driver.find_element(
