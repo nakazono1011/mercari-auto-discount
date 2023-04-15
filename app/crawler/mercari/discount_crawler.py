@@ -95,7 +95,7 @@ class DiscountCrawler(BaseCrawler):
                     f"[イベント] 価格更新 [商品名] {item_name} [更新前価格] {current_price} [更新後] {updated_price} [URL] {self.driver.current_url}"
                 )
             except Exception as e:
-                logger.error(f"[商品名] {item_name} [例外エラー] {e}")
+                logger.info(f"[商品名] {item_name} [例外エラー] {e}")
                 continue
 
     def _discount(self, price):
