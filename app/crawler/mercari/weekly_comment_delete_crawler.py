@@ -42,14 +42,14 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                     pass
 
                 comment_elements = self.driver.find_elements(
-                    By.CSS_SELECTOR, ".comment__21565466"
+                    By.CSS_SELECTOR, "[data-testid='comment-list']"
                 )
 
                 for comment_element in comment_elements:
                     if (
                         self.DELETE_TARGET_CHARCTER
                         in comment_element.find_element(
-                            By.CSS_SELECTOR, ".contentContainer__21565466"
+                            By.CSS_SELECTOR, "[class*='contentContainer']"
                         ).text
                     ):
 
