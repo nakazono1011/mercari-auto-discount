@@ -30,19 +30,21 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                 ).text
 
                 try:
-                    wait = WebDriverWait(self.driver, 1)
-                    element = wait.until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, "//button[contains(text(), 'コメントをもっと見る')]")
-                        )
-                    )
+                    # wait = WebDriverWait(self.driver, 1)
+                    # element = wait.until(
+                    #     EC.presence_of_element_located(
+                    #         (By.XPATH, "//button[contains(text(), 'コメントをもっと見る')]")
+                    #     )
+                    # )
+
+                    element = self.driver.find_element(By.XPATH, "//button[contains(text(), 'コメントをもっと見る')]")
 
                     element.click()
                 except:
                     pass
 
                 comment_elements = self.driver.find_elements(
-                    By.CSS_SELECTOR, "[data-testid='comment-list']"
+                    By.CSS_SELECTOR, "[data-testid='comment-list']>div"
                 )
 
                 for comment_element in comment_elements:

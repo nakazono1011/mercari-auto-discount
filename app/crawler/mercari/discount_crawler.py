@@ -3,6 +3,7 @@ import time
 import random
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 from crawler.mercari import BaseCrawler
 from logger import get_module_logger
@@ -75,13 +76,15 @@ class DiscountCrawler(BaseCrawler):
                 )
 
                 price_input_element = self.driver.find_element(
-                    By.XPATH,
-                    '//*[@id="main"]/form/section[5]/div[2]/mer-text-input/div/label/div[2]/input',
+                     By.CSS_SELECTOR,
+                    'input[name="price"]',
                 )
                 current_price = int(price_input_element.get_attribute("value"))
                 updated_price = self._discount(current_price)
 
-                price_input_element.clear()
+                price_input_element.click()
+                price_input_element.send_keys(Keys.COMMAND + 'a')
+                price_input_element.send_keys(Keys.BACK_SPACE)
                 price_input_element.send_keys(updated_price)
 
                 time.sleep(0.5)
@@ -105,7 +108,7 @@ class DiscountCrawler(BaseCrawler):
         if price <= 1000:
             raise Exception(f"1000円以下になるので値下げできません")
 
-        # 下３桁が111円の場合は、値引き後に千の位が1桁下がるように、111円引き
+        # 下3桁が111円の場合は、値引き後に千の位が1桁下がるように、111円引き
         if str(price)[-3::] == "111":
             updated_price = price - 112
         else:
