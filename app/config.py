@@ -1,4 +1,5 @@
-DRIVER_PATH = "./driver/chromedriver"
+DRIVER_PATH = "/opt/homebrew/bin/chromedriver"
+# PROFILE_PATH = "./profile/harima"
 PROFILE_PATH = "./profile/myprofile"
 
 WEEKLY_SALE_COMMENT = """
