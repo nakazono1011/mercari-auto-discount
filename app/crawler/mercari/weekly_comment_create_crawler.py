@@ -26,7 +26,7 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
                     By.CSS_SELECTOR, 'div[data-testid="name"]'
                 ).text
 
-                self.driver.find_element(By.CSS_SELECTOR, ".input-node").send_keys(
+                self.driver.find_element(By.XPATH, "//textarea[@placeholder='コメントする']").send_keys(
                     config.WEEKLY_SALE_COMMENT
                 )
 
