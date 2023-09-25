@@ -56,7 +56,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                     ):
 
                         comment_element.find_element(
-                            By.CSS_SELECTOR, "mer-icon-button"
+                            By.CSS_SELECTOR, "mer-icon-garbage-filled"
                         ).click()
 
                         self.driver.find_elements(
