@@ -5,11 +5,11 @@
       "name": "Python: 現在のファイル",
       "type": "python",
       "request": "launch",
-      "program": "${file}",
+      "program": "/Users/nakazono/dev/mercari-auto-discount/app/main.py",
       "console": "integratedTerminal",
       "cwd": "${fileDirname}",
       "justMyCode": true,
-      "args": ["--mode=weekly_comment_delete"]
+      "args": ["--mode=discount"]
     }
   ]
 }
