@@ -36,6 +36,7 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
                     By.CSS_SELECTOR,
                     "[data-location='item_details:comment:post_button']",
                 ).click()
+                time.sleep(random.randint(1, 2))
                 logger.info(f"[商品名] {item_name} [イベント] 週末セールコメント登録完了")
 
             except Exception as e:
