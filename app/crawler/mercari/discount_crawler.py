@@ -28,8 +28,7 @@ class DiscountCrawler(BaseCrawler):
         # 要素内の値引き対象のURLを取得
         item_urls = []
         for el in item_list:
-            item_root = el.find_element(By.TAG_NAME, "mer-item-object").shadow_root
-            if self._is_skip(item_root):
+            if self._is_skip(el):
                 continue
 
             item_url = el.find_element(By.TAG_NAME, "a").get_attribute("href")
@@ -41,8 +40,8 @@ class DiscountCrawler(BaseCrawler):
         """
         スキップ対象の判定
         """
-        pre_update_time_text = el.find_elements(By.CLASS_NAME, "icon-text")[-1].text
-        title = el.find_element(By.CLASS_NAME, "item-label").text
+        pre_update_time_text = el.find_elements(By.CLASS_NAME, "iconText__97a42da1")[-1].text
+        title = el.find_element(By.CLASS_NAME, "itemLabel__97a42da1").text
 
         is_before_day = bool(re.search("(分前)|(時間前)", pre_update_time_text))
         is_contain_star = bool(re.search("★", title))

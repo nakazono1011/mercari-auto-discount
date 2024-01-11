@@ -20,7 +20,7 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
             try:
                 self.driver.get(target_url)
 
-                time.sleep(random.randint(1, 4))
+                time.sleep(random.randint(1, 3))
 
                 item_name = self.driver.find_element(
                     By.CSS_SELECTOR, 'div[data-testid="name"]'
@@ -29,6 +29,8 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
                 self.driver.find_element(By.XPATH, "//textarea[@placeholder='コメントする']").send_keys(
                     config.WEEKLY_SALE_COMMENT
                 )
+
+                time.sleep(random.randint(1, 2))
 
                 self.driver.find_element(
                     By.CSS_SELECTOR,
@@ -54,8 +56,7 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
         # 要素内のコメント対象のURLを取得
         item_urls = []
         for el in item_list:
-            item_root = el.find_element(By.TAG_NAME, "mer-item-object").shadow_root
-            like_count = int(item_root.find_element(By.CLASS_NAME, "icon-text").text)
+            like_count = int(el.find_elements(By.CLASS_NAME, "iconText__97a42da1")[0].text)
             if like_count < self.MIN_LIKE_COUNT:
                 continue
 

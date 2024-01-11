@@ -85,8 +85,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
         # 要素内のコメント対象のURLを取得
         item_urls = []
         for el in item_list:
-            item_root = el.find_element(By.TAG_NAME, "mer-item-object").shadow_root
-            like_count = int(item_root.find_element(By.CLASS_NAME, "icon-text").text)
+            like_count = int(el.find_elements(By.CLASS_NAME, "iconText__97a42da1")[0].text)
             if like_count < self.MIN_LIKE_COUNT:
                 continue
 
