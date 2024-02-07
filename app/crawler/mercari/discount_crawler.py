@@ -60,6 +60,9 @@ class DiscountCrawler(BaseCrawler):
         """
         for target_url in target_urls:
             try:
+                if self.driver is None:
+                    self.driver = self._load_driver()
+
                 self.driver.get(target_url)
                 time.sleep(random.randint(1, 2))
 
@@ -96,6 +99,11 @@ class DiscountCrawler(BaseCrawler):
                 logger.info(
                     f"[イベント] 価格更新 [商品名] {item_name} [更新前価格] {current_price} [更新後] {updated_price} [URL] {self.driver.current_url}"
                 )
+
+                time.sleep(random.randint(1, 2))
+
+                self.driver.quit()
+                self.driver = None
             except Exception as e:
                 logger.info(f"[商品名] {item_name} [例外エラー] {e}")
                 continue

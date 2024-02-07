@@ -24,6 +24,9 @@ class BaseCrawler(metaclass=ABCMeta):
         """
         options = webdriver.chrome.options.Options()
         options.add_argument("--user-data-dir=" + profile_path)
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-gpu')
+        options.add_argument('--disable-dev-shm-usage')
 
         chrome_service = fs.Service(executable_path=driver_path)
         driver = webdriver.Chrome(service=chrome_service, options=options)
@@ -44,6 +47,7 @@ class BaseCrawler(metaclass=ABCMeta):
         load_more_button = self.driver.find_element(
             By.XPATH, LOAD_BUTTON_XPATH
         )
+        time.sleep(1)
         load_more_button.click()
 
         ## 1~4秒間でランダムに待機
