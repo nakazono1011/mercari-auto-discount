@@ -15,6 +15,8 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
     START_URL = "https://jp.mercari.com/mypage/listings"
     # 最低いいね数
     MIN_LIKE_COUNT = 2
+    # 最低コメント数
+    MIN_COMMENT_COUNT = 1
     # 削除対象の判定文字列
     DELETE_TARGET_CHARCTER = "★"
 
@@ -59,9 +61,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                             By.CSS_SELECTOR, "mer-icon-garbage-filled"
                         ).click()
 
-                        self.driver.find_elements(
-                            By.CSS_SELECTOR, "mer-dialog .merButton"
-                        )[-1].click()
+                        self.driver.find_element(By.XPATH, "//button[contains(text(), '削除する')]").click()
 
                         time.sleep(3)
 
@@ -86,11 +86,11 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
         item_urls = []
         for el in item_list:
             like_count = int(el.find_elements(By.CLASS_NAME, "iconText__97a42da1")[0].text)
-            if like_count < self.MIN_LIKE_COUNT:
-                continue
-
-            item_url = el.find_element(By.TAG_NAME, "a").get_attribute("href")
-            item_urls.append(item_url)
+            comment_count = int(el.find_elements(By.CLASS_NAME, "iconText__97a42da1")[1].text)
+            
+            if like_count >= self.MIN_LIKE_COUNT and comment_count >= self.MIN_COMMENT_COUNT:
+                item_url = el.find_element(By.TAG_NAME, "a").get_attribute("href")
+                item_urls.append(item_url)
 
         return item_urls
 
