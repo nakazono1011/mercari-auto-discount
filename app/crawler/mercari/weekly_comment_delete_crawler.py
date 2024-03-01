@@ -61,7 +61,8 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                             By.CSS_SELECTOR, "mer-icon-garbage-filled"
                         ).click()
 
-                        self.driver.find_element(By.XPATH, "//button[contains(text(), '削除する')]").click()
+                        delete_button_element = self.driver.find_element(By.XPATH, "//button[contains(text(), '削除する')]")
+                        self.driver.execute_script("arguments[0].click();", delete_button_element)
 
                         time.sleep(3)
 
