@@ -58,7 +58,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                     ):
 
                         comment_element.find_element(
-                            By.CSS_SELECTOR, "mer-icon-garbage-filled"
+                            By.CSS_SELECTOR, "[aria-label='削除する']"
                         ).click()
 
                         delete_button_element = self.driver.find_element(By.XPATH, "//button[contains(text(), '削除する')]")
