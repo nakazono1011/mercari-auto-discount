@@ -81,7 +81,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
         listed_item_element = self.driver.find_element(
             By.CSS_SELECTOR, "[data-testid='listed-item-list']"
         )
-        item_list = listed_item_element.find_elements(By.CSS_SELECTOR, "[data-testid='merListItem-container']")
+        item_list = listed_item_element.find_elements(By.CSS_SELECTOR, "[data-testid='listed-item']")
 
         # 要素内のコメント対象のURLを取得
         item_urls = []
