@@ -32,14 +32,9 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                 ).text
 
                 try:
-                    # wait = WebDriverWait(self.driver, 1)
-                    # element = wait.until(
-                    #     EC.presence_of_element_located(
-                    #         (By.XPATH, "//button[contains(text(), 'コメントをもっと見る')]")
-                    #     )
-                    # )
-
-                    element = self.driver.find_element(By.XPATH, "//button[contains(text(), 'コメントをもっと見る')]")
+                    element = self.driver.find_element(
+                        By.XPATH, "//button[contains(text(), 'コメントをもっと見る')]"
+                    )
 
                     element.click()
                 except:
@@ -56,17 +51,22 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                             By.CSS_SELECTOR, "[class*='contentContainer']"
                         ).text
                     ):
-
                         comment_element.find_element(
                             By.CSS_SELECTOR, "[aria-label='削除する']"
                         ).click()
 
-                        delete_button_element = self.driver.find_element(By.XPATH, "//button[contains(text(), '削除する')]")
-                        self.driver.execute_script("arguments[0].click();", delete_button_element)
+                        delete_button_element = self.driver.find_element(
+                            By.XPATH, "//button[contains(text(), '削除する')]"
+                        )
+                        self.driver.execute_script(
+                            "arguments[0].click();", delete_button_element
+                        )
 
                         time.sleep(3)
 
-                logger.info(f"[商品名] {item_name} [イベント] 週末セールコメント削除完了")
+                logger.info(
+                    f"[商品名] {item_name} [イベント] 週末セールコメント削除完了"
+                )
 
             except Exception as e:
                 logger.error(f"[商品名] {item_name} [例外エラー] {e}")
@@ -81,15 +81,28 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
         listed_item_element = self.driver.find_element(
             By.CSS_SELECTOR, "[data-testid='listed-item-list']"
         )
-        item_list = listed_item_element.find_elements(By.CSS_SELECTOR, "[data-testid='listed-item']")
+        item_list = listed_item_element.find_elements(
+            By.CSS_SELECTOR, "[data-testid='listed-item']"
+        )
 
         # 要素内のコメント対象のURLを取得
         item_urls = []
         for el in item_list:
-            like_count = int(el.find_elements(By.CLASS_NAME, "iconText__97a42da1")[0].text)
-            comment_count = int(el.find_elements(By.CLASS_NAME, "iconText__97a42da1")[1].text)
-            
-            if like_count >= self.MIN_LIKE_COUNT and comment_count >= self.MIN_COMMENT_COUNT:
+            like_count = int(
+                el.find_elements(
+                    By.CSS_SELECTOR, "[data-testid='itemobject']>div>div>div"
+                )[0].text
+            )
+            comment_count = int(
+                el.find_elements(
+                    By.CSS_SELECTOR, "[data-testid='itemobject']>div>div>div"
+                )[1].text
+            )
+
+            if (
+                like_count >= self.MIN_LIKE_COUNT
+                and comment_count >= self.MIN_COMMENT_COUNT
+            ):
                 item_url = el.find_element(By.TAG_NAME, "a").get_attribute("href")
                 item_urls.append(item_url)
 

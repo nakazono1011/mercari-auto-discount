@@ -26,9 +26,9 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
                     By.CSS_SELECTOR, 'div[data-testid="name"]'
                 ).text
 
-                self.driver.find_element(By.XPATH, "//textarea[@placeholder='コメントする']").send_keys(
-                    config.WEEKLY_SALE_COMMENT
-                )
+                self.driver.find_element(
+                    By.XPATH, "//textarea[@placeholder='コメントする']"
+                ).send_keys(config.WEEKLY_SALE_COMMENT)
 
                 time.sleep(random.randint(1, 2))
 
@@ -37,7 +37,9 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
                     "[data-location='item_details:comment:post_button']",
                 ).click()
                 time.sleep(random.randint(1, 2))
-                logger.info(f"[商品名] {item_name} [イベント] 週末セールコメント登録完了")
+                logger.info(
+                    f"[商品名] {item_name} [イベント] 週末セールコメント登録完了"
+                )
 
             except Exception as e:
                 logger.error(f"[商品名] {item_name} [例外エラー] {e}")
@@ -52,12 +54,28 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
         listed_item_element = self.driver.find_element(
             By.CSS_SELECTOR, "[data-testid='listed-item-list']"
         )
-        item_list = listed_item_element.find_elements(By.CSS_SELECTOR, "[data-testid='listed-item']")
+        item_list = listed_item_element.find_elements(
+            By.CSS_SELECTOR, "[data-testid='listed-item']"
+        )
 
         # 要素内のコメント対象のURLを取得
         item_urls = []
         for el in item_list:
-            like_count = int(el.find_elements(By.CLASS_NAME, "iconText__97a42da1")[0].text)
+            # タイトル要素を取得
+            title_element = el.find_element(
+                By.CSS_SELECTOR, "[data-testid='itemobject']>div"
+            )
+            title_text = title_element.text
+
+            # タイトルに☆が含まれている場合はループを抜ける
+            if "☆" in title_text:
+                break
+
+            like_count = int(
+                el.find_elements(
+                    By.CSS_SELECTOR, "[data-testid='itemobject']>div>div>div"
+                )[0].text
+            )
             if like_count < self.MIN_LIKE_COUNT:
                 continue
 
