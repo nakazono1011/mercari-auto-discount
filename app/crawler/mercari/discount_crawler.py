@@ -23,7 +23,9 @@ class DiscountCrawler(BaseCrawler):
         listed_item_element = self.driver.find_element(
             By.CSS_SELECTOR, "[data-testid='listed-item-list']"
         )
-        item_list = listed_item_element.find_elements(By.CSS_SELECTOR, "[data-testid='listed-item']")
+        item_list = listed_item_element.find_elements(
+            By.CSS_SELECTOR, "[data-testid='listed-item']"
+        )
 
         # 要素内の値引き対象のURLを取得
         item_urls = []
@@ -40,8 +42,13 @@ class DiscountCrawler(BaseCrawler):
         """
         スキップ対象の判定
         """
-        pre_update_time_text = el.find_elements(By.CLASS_NAME, "iconText__97a42da1")[-1].text
-        title = el.find_element(By.CLASS_NAME, "itemLabel__97a42da1").text
+        # pre_update_time_text = el.find_elements(By.CLASS_NAME, "iconText__97a42da1")[-1].text
+        pre_update_time_text = (
+            el.find_elements(By.TAG_NAME, "svg")[3]
+            .find_element(By.XPATH, "./parent::*")
+            .text
+        )
+        title = el.find_element(By.CSS_SELECTOR, "[data-testid='itemobject']>div").text
 
         is_before_day = bool(re.search("(分前)|(時間前)", pre_update_time_text))
         is_contain_star = bool(re.search("★", title))
@@ -78,14 +85,14 @@ class DiscountCrawler(BaseCrawler):
                 )
 
                 price_input_element = self.driver.find_element(
-                     By.CSS_SELECTOR,
+                    By.CSS_SELECTOR,
                     'input[name="price"]',
                 )
                 current_price = int(price_input_element.get_attribute("value"))
                 updated_price = self._discount(current_price)
 
                 price_input_element.click()
-                price_input_element.send_keys(Keys.COMMAND + 'a')
+                price_input_element.send_keys(Keys.COMMAND + "a")
                 price_input_element.send_keys(Keys.BACK_SPACE)
                 price_input_element.send_keys(updated_price)
 
