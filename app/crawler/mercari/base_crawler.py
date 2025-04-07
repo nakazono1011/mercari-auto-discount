@@ -24,9 +24,9 @@ class BaseCrawler(metaclass=ABCMeta):
         """
         options = webdriver.chrome.options.Options()
         options.add_argument("--user-data-dir=" + profile_path)
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-gpu')
-        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--disable-dev-shm-usage")
 
         chrome_service = fs.Service(executable_path=driver_path)
         driver = webdriver.Chrome(service=chrome_service, options=options)
@@ -38,15 +38,15 @@ class BaseCrawler(metaclass=ABCMeta):
         """
         出品ページの「もっと見る」ボタンが非表示になるまで再帰的に押し続ける処理
         """
-        LOAD_BUTTON_XPATH = "//*[@id='currentListing']//*[contains(text(), 'もっと見る')]"
+        LOAD_BUTTON_XPATH = (
+            "//*[@id='currentListing']//*[contains(text(), 'もっと見る')]"
+        )
 
         if not self.driver.find_elements(By.XPATH, LOAD_BUTTON_XPATH):
             logger.error("[エラー] もっと見るボタンが見つかりませんでした")
             return
 
-        load_more_button = self.driver.find_element(
-            By.XPATH, LOAD_BUTTON_XPATH
-        )
+        load_more_button = self.driver.find_element(By.XPATH, LOAD_BUTTON_XPATH)
         time.sleep(1)
         load_more_button.click()
 
