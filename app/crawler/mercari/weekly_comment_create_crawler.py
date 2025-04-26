@@ -62,9 +62,7 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
         item_urls = []
         for el in item_list:
             # タイトル要素を取得
-            title_element = el.find_element(
-                By.CSS_SELECTOR, "[data-testid='itemobject']>div"
-            )
+            title_element = el.find_element(By.CSS_SELECTOR, ".merItemObject span")
             title_text = title_element.text
 
             # タイトルに☆が含まれている場合はループを抜ける
@@ -72,9 +70,7 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
                 break
 
             like_count = int(
-                el.find_elements(
-                    By.CSS_SELECTOR, "[data-testid='itemobject']>div>div>div"
-                )[0].text
+                el.find_elements(By.CSS_SELECTOR, ".merIcon + span")[0].text
             )
             if like_count < self.MIN_LIKE_COUNT:
                 continue

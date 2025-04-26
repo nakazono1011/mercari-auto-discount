@@ -89,14 +89,10 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
         item_urls = []
         for el in item_list:
             like_count = int(
-                el.find_elements(
-                    By.CSS_SELECTOR, "[data-testid='itemobject']>div>div>div"
-                )[0].text
+                el.find_elements(By.CSS_SELECTOR, ".merIcon + span")[0].text
             )
             comment_count = int(
-                el.find_elements(
-                    By.CSS_SELECTOR, "[data-testid='itemobject']>div>div>div"
-                )[1].text
+                el.find_elements(By.CSS_SELECTOR, ".merIcon + span")[1].text
             )
 
             if (
