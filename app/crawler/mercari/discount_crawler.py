@@ -33,7 +33,7 @@ class DiscountCrawler(BaseCrawler):
             if self._is_skip(el):
                 continue
 
-            item_url = el.find_element(By.TAG_NAME, "a").get_attribute("href")
+            item_url = el.get_attribute("href")
             item_urls.append(item_url)
 
         return item_urls
