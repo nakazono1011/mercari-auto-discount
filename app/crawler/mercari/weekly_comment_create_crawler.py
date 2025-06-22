@@ -62,7 +62,9 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
         item_urls = []
         for el in item_list:
             # タイトル要素を取得
-            title_element = el.find_element(By.CSS_SELECTOR, ".merItemObject span")
+            title_element = el.find_element(
+                By.CSS_SELECTOR, "[data-testid='item-label']"
+            )
             title_text = title_element.text
 
             # タイトルに☆が含まれている場合はループを抜ける
