@@ -89,17 +89,25 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
         item_urls = []
         for el in item_list:
             like_count = int(
-                el.find_elements(By.CSS_SELECTOR, ".merIcon + span")[0].text
+                (
+                    el.find_elements(By.TAG_NAME, "svg")[0]
+                    .find_element(By.XPATH, "./parent::*")
+                    .text
+                )
             )
             comment_count = int(
-                el.find_elements(By.CSS_SELECTOR, ".merIcon + span")[1].text
+                (
+                    el.find_elements(By.TAG_NAME, "svg")[1]
+                    .find_element(By.XPATH, "./parent::*")
+                    .text
+                )
             )
 
             if (
                 like_count >= self.MIN_LIKE_COUNT
                 and comment_count >= self.MIN_COMMENT_COUNT
             ):
-                item_url = el.find_element(By.TAG_NAME, "a").get_attribute("href")
+                item_url = el.get_attribute("href")
                 item_urls.append(item_url)
 
         return item_urls

@@ -72,12 +72,16 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
                 break
 
             like_count = int(
-                el.find_elements(By.CSS_SELECTOR, ".merIcon + span")[0].text
+                (
+                    el.find_elements(By.TAG_NAME, "svg")[0]
+                    .find_element(By.XPATH, "./parent::*")
+                    .text
+                )
             )
             if like_count < self.MIN_LIKE_COUNT:
                 continue
 
-            item_url = el.find_element(By.TAG_NAME, "a").get_attribute("href")
+            item_url = el.get_attribute("href")
             item_urls.append(item_url)
 
         return item_urls
