@@ -48,7 +48,7 @@ class DiscountCrawler(BaseCrawler):
             .find_element(By.XPATH, "./parent::*")
             .text
         )
-        title = el.find_element(By.CSS_SELECTOR, ".merItemObject span").text
+        title = el.find_element(By.CSS_SELECTOR, "[data-testid='item-label']").text
 
         is_before_day = bool(re.search("(分前)|(時間前)", pre_update_time_text))
         is_contain_star = bool(re.search("★", title))
