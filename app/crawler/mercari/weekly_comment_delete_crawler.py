@@ -48,11 +48,11 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                     if (
                         self.DELETE_TARGET_CHARCTER
                         in comment_element.find_element(
-                            By.CSS_SELECTOR, "[class*='contentContainer']"
+                            By.CSS_SELECTOR, "[data-testid='message-body']"
                         ).text
                     ):
                         comment_element.find_element(
-                            By.CSS_SELECTOR, "[aria-label='削除する']"
+                            By.CSS_SELECTOR, "[aria-labelledby=':r4:']"
                         ).click()
 
                         delete_button_element = self.driver.find_element(
