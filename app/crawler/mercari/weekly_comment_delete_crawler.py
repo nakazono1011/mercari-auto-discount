@@ -52,7 +52,8 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                         ).text
                     ):
                         comment_element.find_element(
-                            By.CSS_SELECTOR, "[aria-labelledby=':r4:']"
+                            By.XPATH,
+                            ".//span[normalize-space()='削除する']/following-sibling::button[@type='button']",
                         ).click()
 
                         delete_button_element = self.driver.find_element(
