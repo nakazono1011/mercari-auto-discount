@@ -10,6 +10,24 @@ from logger import get_module_logger
 
 logger = get_module_logger(__name__)
 
+_UPDATE_TIME_RE = re.compile(r"\d+\s*(?:分前|時間前|日前|週間前|ヶ月前|か月前)")
+
+
+def extract_update_time_text(icon_texts):
+    """アイコン文言から前回更新時刻を取り出す。件数や並びが変わっても時刻表記を優先する。"""
+    for text in reversed(icon_texts):
+        match = _UPDATE_TIME_RE.search(text or "")
+        if match:
+            return match.group(0)
+    return ""
+
+
+def should_skip_item(title, update_time_text):
+    """直近更新（分前・時間前）またはタイトルに★がある商品は値下げしない。"""
+    is_before_day = bool(re.search(r"(分前)|(時間前)", update_time_text or ""))
+    is_contain_star = bool(re.search("★", title or ""))
+    return is_before_day | is_contain_star
+
 
 class DiscountCrawler(BaseCrawler):
     START_URL = "https://jp.mercari.com/mypage/listings"
@@ -30,7 +48,11 @@ class DiscountCrawler(BaseCrawler):
         # 要素内の値引き対象のURLを取得
         item_urls = []
         for el in item_list:
-            if self._is_skip(el):
+            try:
+                if self._is_skip(el):
+                    continue
+            except Exception as e:
+                logger.warning(f"[スキップ判定失敗] {e}")
                 continue
 
             item_url = el.get_attribute("href")
@@ -42,18 +64,19 @@ class DiscountCrawler(BaseCrawler):
         """
         スキップ対象の判定
         """
-        # pre_update_time_text = el.find_elements(By.CLASS_NAME, "iconText__97a42da1")[-1].text
-        pre_update_time_text = (
-            el.find_elements(By.TAG_NAME, "svg")[3]
-            .find_element(By.XPATH, "./parent::*")
-            .text
-        )
+        icon_texts = []
+        for svg in el.find_elements(By.TAG_NAME, "svg"):
+            try:
+                icon_texts.append(svg.find_element(By.XPATH, "./parent::*").text)
+            except Exception:
+                continue
+
+        pre_update_time_text = extract_update_time_text(icon_texts)
+        if not pre_update_time_text:
+            pre_update_time_text = extract_update_time_text([el.text])
+
         title = el.find_element(By.CSS_SELECTOR, "[data-testid='item-label']").text
-
-        is_before_day = bool(re.search("(分前)|(時間前)", pre_update_time_text))
-        is_contain_star = bool(re.search("★", title))
-
-        is_target = is_before_day | is_contain_star
+        is_target = should_skip_item(title, pre_update_time_text)
 
         logger.info(
             f"[タイトル]{title} [前回更新時刻]：{pre_update_time_text} [値引き対象Flg]：{not is_target}"

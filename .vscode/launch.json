@@ -5,7 +5,7 @@
       "name": "Python: 現在のファイル",
       "type": "python",
       "request": "launch",
-      "program": "/Users/nakazono/dev/mercari-auto-discount/app/main.py",
+      "program": "/Users/nakazono/dev/harima/mercari-auto-discount/app/main.py",
       "console": "integratedTerminal",
       "cwd": "${fileDirname}",
       "justMyCode": true,
