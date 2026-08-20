@@ -1,10 +1,10 @@
+import os
 import time
 import random
 from abc import ABCMeta, abstractclassmethod
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome import service as fs
 
 import config
 from logger import get_module_logger
@@ -16,9 +16,7 @@ class BaseCrawler(metaclass=ABCMeta):
     def __init__(self):
         pass
 
-    def _load_driver(
-        self, driver_path=config.DRIVER_PATH, profile_path=config.PROFILE_PATH
-    ):
+    def _load_driver(self, profile_path=config.PROFILE_PATH):
         """
         driver の起動
         """
@@ -28,8 +26,10 @@ class BaseCrawler(metaclass=ABCMeta):
         options.add_argument("--disable-gpu")
         options.add_argument("--disable-dev-shm-usage")
 
-        chrome_service = fs.Service(executable_path=driver_path)
-        driver = webdriver.Chrome(service=chrome_service, options=options)
+        # Homebrew 等の PATH 上 chromedriver が Chrome とズレていても、
+        # Selenium Manager が合うバージョンを取るようにする
+        os.environ["SE_SKIP_DRIVER_IN_PATH"] = "true"
+        driver = webdriver.Chrome(options=options)
         driver.implicitly_wait(15)
 
         return driver
