@@ -2,14 +2,34 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: 現在のファイル",
+      "name": "値下げ",
       "type": "python",
       "request": "launch",
-      "program": "/Users/nakazono/dev/harima/mercari-auto-discount/app/main.py",
+      "program": "${workspaceFolder}/app/main.py",
       "console": "integratedTerminal",
-      "cwd": "${fileDirname}",
+      "cwd": "${workspaceFolder}/app",
       "justMyCode": true,
       "args": ["--mode=discount"]
+    },
+    {
+      "name": "SALEコメント登録",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/app/main.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/app",
+      "justMyCode": true,
+      "args": ["--mode=weekly_comment_create"]
+    },
+    {
+      "name": "コメント削除",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/app/main.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/app",
+      "justMyCode": true,
+      "args": ["--mode=weekly_comment_delete"]
     }
   ]
 }
