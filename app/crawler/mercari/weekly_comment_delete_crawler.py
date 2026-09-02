@@ -30,11 +30,18 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                     By.CSS_SELECTOR, 'div[data-testid="name"]'
                 ).text
 
-                load_more_comments = self._find_optional_elements(
-                    By.XPATH, "//button[contains(text(), 'コメントをもっと見る')]"
-                )
-                if load_more_comments:
-                    self._safe_click(load_more_comments[0])
+                load_more_comments = []
+                deadline = time.time() + 2
+                while True:
+                    load_more_comments = self._find_optional_elements(
+                        By.XPATH, "//button[contains(text(), 'コメントをもっと見る')]"
+                    )
+                    if load_more_comments:
+                        self._safe_click(load_more_comments[0])
+                        break
+                    if time.time() >= deadline:
+                        break
+                    time.sleep(0.2)
 
                 comment_elements = self.driver.find_elements(
                     By.CSS_SELECTOR, "[data-testid='comment-list']>div"
