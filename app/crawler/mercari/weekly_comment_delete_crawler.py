@@ -56,9 +56,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                         delete_button_element = self.driver.find_element(
                             By.XPATH, "//button[contains(text(), '削除する')]"
                         )
-                        self.driver.execute_script(
-                            "arguments[0].click();", delete_button_element
-                        )
+                        self._safe_click(delete_button_element)
 
                         time.sleep(3)
 
@@ -107,6 +105,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
             ):
                 item_url = self._get_listed_item_url(el)
                 if not item_url:
+                    logger.warning("[スキップ] 商品URLを取得できませんでした")
                     continue
                 item_urls.append(item_url)
 

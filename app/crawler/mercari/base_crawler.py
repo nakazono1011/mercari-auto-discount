@@ -97,32 +97,20 @@ class BaseCrawler(metaclass=ABCMeta):
         画像著作権確認チェックボックスが表示されている場合にチェックする。
         全商品に表示されるわけではないため、存在しない場合は何もしない。
         """
-        locators = [
-            (By.CSS_SELECTOR, '[data-testid="listing-alert-consent"]'),
-            (
-                By.XPATH,
-                "//input[@type='checkbox'][following-sibling::*[contains(., '画像は自分で撮影・作成しました')]]",
-            ),
-            (
-                By.XPATH,
-                "//label[contains(., '画像は自分で撮影・作成しました')]/input[@type='checkbox']",
-            ),
-        ]
-
-        for by, value in locators:
-            checkboxes = self._find_optional_elements(by, value)
-            if not checkboxes:
-                continue
-
-            checkbox = checkboxes[0]
-            if checkbox.is_selected():
-                logger.info("[イベント] 画像著作権確認チェックボックスは既にチェック済み")
-                return
-
-            self._safe_click(checkbox)
-            time.sleep(0.3)
-            logger.info("[イベント] 画像著作権確認チェックボックスをチェック")
+        checkboxes = self._find_optional_elements(
+            By.CSS_SELECTOR, '[data-testid="listing-alert-consent"]'
+        )
+        if not checkboxes:
             return
+
+        checkbox = checkboxes[0]
+        if checkbox.is_selected():
+            logger.info("[イベント] 画像著作権確認チェックボックスは既にチェック済み")
+            return
+
+        self._safe_click(checkbox)
+        time.sleep(0.3)
+        logger.info("[イベント] 画像著作権確認チェックボックスをチェック")
 
     @abstractclassmethod
     def crawl(self):

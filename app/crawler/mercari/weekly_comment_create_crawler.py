@@ -86,6 +86,7 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
 
             item_url = self._get_listed_item_url(el)
             if not item_url:
+                logger.warning("[スキップ] 商品URLを取得できませんでした")
                 continue
             item_urls.append(item_url)
 
