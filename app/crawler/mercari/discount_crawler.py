@@ -131,7 +131,7 @@ class DiscountCrawler(BaseCrawler):
                 edit_button = self.driver.find_element(
                     By.CSS_SELECTOR, '[data-testid="edit-button"]'
                 )
-                edit_button.click()
+                self._safe_click(edit_button)
 
                 logger.info(
                     f"[イベント] 価格更新 [商品名] {item_name} [更新前価格] {current_price} [更新後] {updated_price} [URL] {self.driver.current_url}"

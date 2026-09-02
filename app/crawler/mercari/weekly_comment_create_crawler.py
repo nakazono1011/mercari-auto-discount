@@ -17,6 +17,7 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
 
     def _comment_all(self, target_urls):
         for target_url in target_urls:
+            item_name = ""
             try:
                 self.driver.get(target_url)
 
@@ -32,11 +33,12 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
 
                 time.sleep(random.randint(1, 2))
 
-                self.driver.find_element(
+                post_button = self.driver.find_element(
                     By.CSS_SELECTOR,
                     "[data-location='item_details:comment:post_button']",
-                ).click()
-                
+                )
+                self._safe_click(post_button)
+
                 time.sleep(random.randint(1, 2))
                 logger.info(
                     f"[商品名] {item_name} [イベント] 週末セールコメント登録完了"
@@ -82,7 +84,9 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
             if like_count < self.MIN_LIKE_COUNT:
                 continue
 
-            item_url = el.get_attribute("href")
+            item_url = self._get_listed_item_url(el)
+            if not item_url:
+                continue
             item_urls.append(item_url)
 
         return item_urls

@@ -1,9 +1,7 @@
 import time
 import random
 
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 
 from crawler.mercari import BaseCrawler
 from logger import get_module_logger
@@ -22,6 +20,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
 
     def _delete_comment_all(self, target_urls):
         for target_url in target_urls:
+            item_name = ""
             try:
                 self.driver.get(target_url)
 
@@ -31,14 +30,11 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                     By.CSS_SELECTOR, 'div[data-testid="name"]'
                 ).text
 
-                try:
-                    element = self.driver.find_element(
-                        By.XPATH, "//button[contains(text(), 'コメントをもっと見る')]"
-                    )
-
-                    element.click()
-                except:
-                    pass
+                load_more_comments = self._find_optional_elements(
+                    By.XPATH, "//button[contains(text(), 'コメントをもっと見る')]"
+                )
+                if load_more_comments:
+                    self._safe_click(load_more_comments[0])
 
                 comment_elements = self.driver.find_elements(
                     By.CSS_SELECTOR, "[data-testid='comment-list']>div"
@@ -51,10 +47,11 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                             By.CSS_SELECTOR, "[data-testid='message-body']"
                         ).text
                     ):
-                        comment_element.find_element(
+                        delete_icon = comment_element.find_element(
                             By.XPATH,
                             ".//span[normalize-space()='削除する']/following-sibling::button[@type='button']",
-                        ).click()
+                        )
+                        self._safe_click(delete_icon)
 
                         delete_button_element = self.driver.find_element(
                             By.XPATH, "//button[contains(text(), '削除する')]"
@@ -108,7 +105,9 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                 like_count >= self.MIN_LIKE_COUNT
                 and comment_count >= self.MIN_COMMENT_COUNT
             ):
-                item_url = el.get_attribute("href")
+                item_url = self._get_listed_item_url(el)
+                if not item_url:
+                    continue
                 item_urls.append(item_url)
 
         return item_urls

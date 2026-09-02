@@ -97,14 +97,20 @@ class BaseCrawler(metaclass=ABCMeta):
         画像著作権確認チェックボックスが表示されている場合にチェックする。
         全商品に表示されるわけではないため、存在しない場合は何もしない。
         """
-        checkbox_xpaths = [
-            "//label[contains(., '画像は自分で撮影・作成しました')]/input[@type='checkbox']",
-            "//input[@type='checkbox'][following-sibling::*[contains(., '画像は自分で撮影・作成しました')]]",
-            "//input[@type='checkbox'][../label[contains(., '画像は自分で撮影・作成しました')]]",
+        locators = [
+            (By.CSS_SELECTOR, '[data-testid="listing-alert-consent"]'),
+            (
+                By.XPATH,
+                "//input[@type='checkbox'][following-sibling::*[contains(., '画像は自分で撮影・作成しました')]]",
+            ),
+            (
+                By.XPATH,
+                "//label[contains(., '画像は自分で撮影・作成しました')]/input[@type='checkbox']",
+            ),
         ]
 
-        for xpath in checkbox_xpaths:
-            checkboxes = self._find_optional_elements(By.XPATH, xpath)
+        for by, value in locators:
+            checkboxes = self._find_optional_elements(by, value)
             if not checkboxes:
                 continue
 
