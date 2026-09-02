@@ -55,7 +55,11 @@ class DiscountCrawler(BaseCrawler):
                 logger.warning(f"[スキップ判定失敗] {e}")
                 continue
 
-            item_url = el.get_attribute("href")
+            item_url = self._get_listed_item_url(el)
+            if not item_url:
+                logger.warning("[スキップ] 商品URLを取得できませんでした")
+                continue
+
             item_urls.append(item_url)
 
         return item_urls
@@ -89,6 +93,7 @@ class DiscountCrawler(BaseCrawler):
         対象の商品について値下げを実行する処理
         """
         for target_url in target_urls:
+            item_name = ""
             try:
                 if self.driver is None:
                     self.driver = self._load_driver()
@@ -121,6 +126,8 @@ class DiscountCrawler(BaseCrawler):
 
                 time.sleep(0.5)
 
+                self._confirm_image_creation_if_needed()
+
                 edit_button = self.driver.find_element(
                     By.CSS_SELECTOR, '[data-testid="edit-button"]'
                 )
@@ -136,6 +143,12 @@ class DiscountCrawler(BaseCrawler):
                 self.driver = None
             except Exception as e:
                 logger.info(f"[商品名] {item_name} [例外エラー] {e}")
+                if self.driver is not None:
+                    try:
+                        self.driver.quit()
+                    except Exception:
+                        pass
+                    self.driver = None
                 continue
 
     def _discount(self, price):
