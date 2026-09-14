@@ -45,6 +45,17 @@ class BaseCrawler(metaclass=ABCMeta):
         finally:
             self.driver.implicitly_wait(_IMPLICIT_WAIT_SECONDS)
 
+    def _quit_driver(self):
+        """driver が無い・既に閉じている場合でも落とさずに終了する。"""
+        driver = getattr(self, "driver", None)
+        if driver is None:
+            return
+        try:
+            driver.quit()
+        except Exception:
+            pass
+        self.driver = None
+
     def _safe_click(self, element):
         """固定ヘッダーに隠れないよう中央へスクロールしてからクリックする。"""
         self.driver.execute_script(
@@ -59,26 +70,26 @@ class BaseCrawler(metaclass=ABCMeta):
 
     def _load_more(self):
         """
-        出品ページの「もっと見る」ボタンが非表示になるまで再帰的に押し続ける処理
+        出品ページの「もっと見る」ボタンが非表示になるまで押し続ける処理
         """
         LOAD_BUTTON_XPATH = "//button[descendant::*[contains(text(), 'もっと見る')]]"
+        first = True
 
-        if not self.driver.find_elements(By.XPATH, LOAD_BUTTON_XPATH):
-            logger.error("[エラー] もっと見るボタンが見つかりませんでした")
-            return
+        while True:
+            if first:
+                buttons = self.driver.find_elements(By.XPATH, LOAD_BUTTON_XPATH)
+                first = False
+            else:
+                buttons = self._find_optional_elements(By.XPATH, LOAD_BUTTON_XPATH)
 
-        load_more_button = self.driver.find_element(By.XPATH, LOAD_BUTTON_XPATH)
-        time.sleep(1)
-        self._safe_click(load_more_button)
+            if not buttons:
+                logger.info("[イベント] 出品リストの読み込み完了")
+                return
 
-        ## 1~4秒間でランダムに待機
-        time.sleep(random.randint(1, 4))
-
-        ## ロードボタンが無くなるまで再帰的に処理する
-        logger.info("[イベント] もっと見る押下")
-        self._load_more()
-
-        pass
+            time.sleep(1)
+            self._safe_click(buttons[0])
+            time.sleep(random.randint(1, 4))
+            logger.info("[イベント] もっと見る押下")
 
     def _get_listed_item_url(self, el):
         """出品一覧の要素から商品URLを取得する。"""

@@ -9,6 +9,25 @@ from logger import get_module_logger
 logger = get_module_logger(__name__)
 
 
+def pick_confirm_delete_button(buttons):
+    """確認ダイアログの「削除する」は span 内テキストなので button.text で判定する。"""
+    for button in buttons:
+        if "削除する" in (getattr(button, "text", None) or ""):
+            return button
+    return None
+
+
+def pick_visible_confirm_delete_button(dialogs):
+    """未表示の空ダイアログは常時DOMにあるので、開いているものだけ見る。"""
+    for dialog in dialogs:
+        if not dialog.is_displayed():
+            continue
+        confirm = pick_confirm_delete_button(dialog.find_elements(By.TAG_NAME, "button"))
+        if confirm is not None:
+            return confirm
+    return None
+
+
 class WeeklyCommentDeleteCrawler(BaseCrawler):
     START_URL = "https://jp.mercari.com/mypage/listings"
     # 最低いいね数
@@ -60,9 +79,21 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                         )
                         self._safe_click(delete_icon)
 
-                        delete_button_element = self.driver.find_element(
-                            By.XPATH, "//button[contains(text(), '削除する')]"
-                        )
+                        delete_button_element = None
+                        deadline = time.time() + 10
+                        while True:
+                            dialogs = self._find_optional_elements(
+                                By.CSS_SELECTOR,
+                                '[data-testid="confirm-delete-comment-dialog"]',
+                            )
+                            delete_button_element = pick_visible_confirm_delete_button(
+                                dialogs
+                            )
+                            if delete_button_element is not None:
+                                break
+                            if time.time() >= deadline:
+                                raise Exception("確認削除ボタンが見つかりません")
+                            time.sleep(0.2)
                         self._safe_click(delete_button_element)
 
                         time.sleep(3)
@@ -124,19 +155,20 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
         """
         logger.info(f"[イベント] 処理開始")
         self.driver = self._load_driver()
-        self.driver.get(self.START_URL)
+        try:
+            self.driver.get(self.START_URL)
 
-        time.sleep(5)
+            time.sleep(5)
 
-        # 出品リストをロード
-        self._load_more()
+            # 出品リストをロード
+            self._load_more()
 
-        # 週末コメント削除対象のURLを取得
-        target_urls = self._scrape_target_urls()
+            # 週末コメント削除対象のURLを取得
+            target_urls = self._scrape_target_urls()
 
-        # コメント削除処理
-        self._delete_comment_all(target_urls)
-        logger.info(f"[削除件数] {len(target_urls)}件")
-
-        self.driver.quit()
-        logger.info(f"[イベント] 処理完了")
+            # コメント削除処理
+            self._delete_comment_all(target_urls)
+            logger.info(f"[削除件数] {len(target_urls)}件")
+        finally:
+            self._quit_driver()
+            logger.info(f"[イベント] 処理完了")

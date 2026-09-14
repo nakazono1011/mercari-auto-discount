@@ -98,17 +98,18 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
         """
         logger.info(f"[イベント] 処理開始")
         self.driver = self._load_driver()
-        self.driver.get(self.START_URL)
+        try:
+            self.driver.get(self.START_URL)
 
-        # 出品リストをロード
-        self._load_more()
+            # 出品リストをロード
+            self._load_more()
 
-        # 週末コメント対象のURLを取得
-        target_urls = self._scrape_target_urls()
+            # 週末コメント対象のURLを取得
+            target_urls = self._scrape_target_urls()
 
-        # コメント登録処理
-        self._comment_all(target_urls)
-        logger.info(f"[更新件数] {len(target_urls)}件")
-
-        self.driver.quit()
-        logger.info(f"[イベント] 処理完了")
+            # コメント登録処理
+            self._comment_all(target_urls)
+            logger.info(f"[更新件数] {len(target_urls)}件")
+        finally:
+            self._quit_driver()
+            logger.info(f"[イベント] 処理完了")
