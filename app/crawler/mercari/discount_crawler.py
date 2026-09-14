@@ -11,6 +11,7 @@ from logger import get_module_logger
 logger = get_module_logger(__name__)
 
 _UPDATE_TIME_RE = re.compile(r"\d+\s*(?:分前|時間前|日前|週間前|ヶ月前|か月前)")
+_ITEM_ID_RE = re.compile(r"/item/(m\d+)")
 
 
 def extract_update_time_text(icon_texts):
@@ -20,6 +21,14 @@ def extract_update_time_text(icon_texts):
         if match:
             return match.group(0)
     return ""
+
+
+def item_url_to_edit_url(item_url):
+    """出品詳細URLから編集ページURLを作る。"""
+    match = _ITEM_ID_RE.search(item_url or "")
+    if not match:
+        return None
+    return f"https://jp.mercari.com/sell/edit/{match.group(1)}"
 
 
 def should_skip_item(title, update_time_text):
@@ -98,12 +107,9 @@ class DiscountCrawler(BaseCrawler):
                 if self.driver is None:
                     self.driver = self._load_driver()
 
-                self.driver.get(target_url)
-                time.sleep(random.randint(1, 2))
-
-                edit_url = self.driver.find_element(
-                    By.CSS_SELECTOR, "[data-testid='checkout-button']>a"
-                ).get_attribute("href")
+                edit_url = item_url_to_edit_url(target_url)
+                if not edit_url:
+                    raise Exception(f"編集URLを作れませんでした: {target_url}")
 
                 self.driver.get(edit_url)
                 time.sleep(random.randint(1, 2))
@@ -138,17 +144,14 @@ class DiscountCrawler(BaseCrawler):
                 )
 
                 time.sleep(random.randint(1, 2))
-
-                self.driver.quit()
-                self.driver = None
             except Exception as e:
-                logger.info(f"[商品名] {item_name} [例外エラー] {e}")
-                if self.driver is not None:
-                    try:
-                        self.driver.quit()
-                    except Exception:
-                        pass
-                    self.driver = None
+                logger.info(
+                    f"[商品名] {item_name} [URL] {target_url} [例外エラー] {e}"
+                )
+                if "no such window" in str(e).lower() or "web view not found" in str(
+                    e
+                ).lower():
+                    self._quit_driver()
                 continue
 
     def _discount(self, price):
@@ -173,17 +176,18 @@ class DiscountCrawler(BaseCrawler):
 
         logger.info(f"[イベント] 処理開始")
         self.driver = self._load_driver()
-        self.driver.get(self.START_URL)
+        try:
+            self.driver.get(self.START_URL)
 
-        # 出品リストをロード
-        self._load_more()
+            # 出品リストをロード
+            self._load_more()
 
-        # 値下げ対象の出品リストを取得
-        target_urls = self._scrape_target_urls()
+            # 値下げ対象の出品リストを取得
+            target_urls = self._scrape_target_urls()
 
-        # 値下げ処理
-        self._update_all(target_urls)
-        logger.info(f"[更新件数] {len(target_urls)}件")
-
-        self.driver.quit()
-        logger.info(f"[イベント] 処理完了")
+            # 値下げ処理
+            self._update_all(target_urls)
+            logger.info(f"[更新件数] {len(target_urls)}件")
+        finally:
+            self._quit_driver()
+            logger.info(f"[イベント] 処理完了")
