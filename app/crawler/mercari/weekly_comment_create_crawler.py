@@ -24,7 +24,7 @@ class WeeklyCommentCreateCrawler(BaseCrawler):
                 time.sleep(random.randint(1, 3))
 
                 item_name = self.driver.find_element(
-                    By.CSS_SELECTOR, 'div[data-testid="name"]'
+                    By.CSS_SELECTOR, '[data-testid="name"]'
                 ).text
 
                 self.driver.find_element(

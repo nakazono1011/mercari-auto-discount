@@ -46,7 +46,7 @@ class WeeklyCommentDeleteCrawler(BaseCrawler):
                 time.sleep(random.randint(1, 4))
 
                 item_name = self.driver.find_element(
-                    By.CSS_SELECTOR, 'div[data-testid="name"]'
+                    By.CSS_SELECTOR, '[data-testid="name"]'
                 ).text
 
                 load_more_comments = []
