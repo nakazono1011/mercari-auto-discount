@@ -2,7 +2,6 @@ from crawler.mercari import (
     DiscountCrawler,
     WeeklyCommentCreateCrawler,
     WeeklyCommentDeleteCrawler,
-    SyncNeCrawler,
 )
 
 
@@ -17,7 +16,5 @@ class CrawlerFactory:
             return WeeklyCommentCreateCrawler()
         elif mode == "weekly_comment_delete":
             return WeeklyCommentDeleteCrawler()
-        elif mode == "sync_ne":
-            return SyncNeCrawler()
         else:
             raise NotImplementedError("実装されていません")
