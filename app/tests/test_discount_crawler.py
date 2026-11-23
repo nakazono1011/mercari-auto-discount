@@ -51,7 +51,7 @@ class FakePriceInput:
     def __init__(self, value, drop_first_digits=0):
         self.value = value
         self.drop = drop_first_digits
-        self.typed = []
+        self.clears = 0
 
     def get_attribute(self, name):
         return self.value
@@ -65,6 +65,7 @@ class FakePriceInput:
         for k in keys:
             if k == Keys.BACK_SPACE:
                 self.value = ""
+                self.clears += 1
             elif k == Keys.COMMAND + "a":
                 pass
             else:
@@ -96,8 +97,9 @@ class SetPriceTest(unittest.TestCase):
     def test_raises_when_value_never_matches(self, _sleep):
         crawler = DiscountCrawler()
         el = FakePriceInput("3,444", drop_first_digits=99)
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegex(Exception, "価格を正しく入力できませんでした"):
             crawler._set_price(el, 3333)
+        self.assertEqual(el.clears, 3)
 
 
 class UpdateAllPriceGuardTest(unittest.TestCase):
