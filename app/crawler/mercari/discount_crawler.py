@@ -23,6 +23,12 @@ def extract_update_time_text(icon_texts):
     return ""
 
 
+def parse_price(text):
+    """「3,444」「¥3,444」のような表記から数値を取り出す。数字が無ければ None。"""
+    digits = re.sub(r"\D", "", text or "")
+    return int(digits) if digits else None
+
+
 def item_url_to_edit_url(item_url):
     """出品詳細URLから編集ページURLを作る。"""
     match = _ITEM_ID_RE.search(item_url or "")
@@ -122,15 +128,12 @@ class DiscountCrawler(BaseCrawler):
                     By.CSS_SELECTOR,
                     'input[name="price"]',
                 )
-                current_price = int(price_input_element.get_attribute("value"))
+                current_price = parse_price(price_input_element.get_attribute("value"))
+                if current_price is None:
+                    raise Exception("現在価格を読み取れませんでした")
                 updated_price = self._discount(current_price)
 
-                price_input_element.click()
-                price_input_element.send_keys(Keys.COMMAND + "a")
-                price_input_element.send_keys(Keys.BACK_SPACE)
-                price_input_element.send_keys(updated_price)
-
-                time.sleep(0.5)
+                self._set_price(price_input_element, updated_price)
 
                 self._confirm_image_creation_if_needed()
 
@@ -153,6 +156,28 @@ class DiscountCrawler(BaseCrawler):
                 ).lower():
                     self._quit_driver()
                 continue
+
+    def _set_price(self, price_input_element, price, max_attempts=3):
+        """
+        価格を入力し、画面上の値が意図した金額になっていることを確認する。
+        入力欄は桁区切りで再描画されるため、打鍵が欠けて桁が変わることがある。
+        一致しなければ入力し直し、最後まで一致しなければ例外にして保存させない。
+        """
+        actual = None
+        for _ in range(max_attempts):
+            price_input_element.click()
+            price_input_element.send_keys(Keys.COMMAND + "a")
+            price_input_element.send_keys(Keys.BACK_SPACE)
+            time.sleep(0.3)
+            price_input_element.send_keys(str(price))
+            time.sleep(0.5)
+
+            actual = parse_price(price_input_element.get_attribute("value"))
+            if actual == price:
+                return
+            logger.warning(f"[警告] 価格入力が不一致 [期待] {price} [実際] {actual} 再入力します")
+
+        raise Exception(f"価格を正しく入力できませんでした [期待] {price} [実際] {actual}")
 
     def _discount(self, price):
         """
