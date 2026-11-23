@@ -1,8 +1,0 @@
-build:
-  docker:
-    web: Dockerfile
-  config:
-    VNC_NO_PASSWORD: 1
-    SCREEN_WIDTH: 1600
-    SCREEN_HEIGHT: 900
-
